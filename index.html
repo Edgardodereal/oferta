@@ -41,13 +41,20 @@
         .label { font-weight: bold; color: #30643E; font-size: 8.5pt; }
         .label-en { color: #777; font-weight: normal; font-style: italic; font-size: 7.5pt; }
         
-        input[type="text"] {
+        input[type="text"], textarea {
             border: none;
             border-bottom: 1px solid #ccc;
             padding: 1px 0;
             font-size: 11pt;
             width: 100%;
             background: transparent;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        textarea {
+            border: 1px solid #ccc;
+            resize: none;
+            margin-top: 5px;
         }
         
         .detalle-enganche {
@@ -56,8 +63,14 @@
             margin-top: 1px;
         }
 
-        /* Bajando líneas de firma y aumentando espacio */
-        .footer { margin-top: 45px; display: flex; justify-content: space-around; }
+        .nota {
+            font-size: 8.5pt;
+            margin-top: 5px;
+            font-style: italic;
+            color: #444;
+        }
+
+        .footer { margin-top: 30px; display: flex; justify-content: space-around; }
         .sig-box { width: 42%; text-align: center; border-top: 1px solid #333; padding-top: 5px; font-size: 8pt; font-weight: bold; }
 
         .no-print {
@@ -82,7 +95,7 @@
 </head>
 <body>
     <div class="header">
-        <img src="https://gruposalo.com/wp-content/uploads/2025/06/logo.png" class="logo-img">
+        <img src="https://gruposalo.com/wp-content/uploads/2025/07/logo-G.png" class="logo-img">
         <div class="title-area">
             <h1>CARTA OFERTA / OFFER LETTER</h1>
             <div style="font-size: 8pt;">
@@ -125,7 +138,7 @@
 
     <div class="section-header">II. INFORMACIÓN DEL VENDEDOR / SELLER INFORMATION</div>
     <div class="row">
-        <div class="group"><div class="label">Vendedor / Asesor <span class="label-en">/ Seller / Advisor</span></div><input type="text" name="asesor" value="Edgardo de Real, Grupo Salo"></div>
+        <div class="group"><div class="label">Vendedor / Asesor <span class="label-en">/ Seller / Advisor</span></div><input type="text" name="asesor" value="Edgardo Romero, Grupo Salo"></div>
     </div>
 
     <div class="section-header">III. PROPIEDAD / PROPERTY</div>
@@ -151,9 +164,9 @@
     <div class="row">
         <div class="group" style="flex: 0.5;"><div class="label">% Descuento <span class="label-en">/ Discount %</span></div><input type="text" name="pct_desc" id="pct_desc"></div>
         <div class="group"><div class="label">Oferta Final de la Unidad <span class="label-en">/ Final Offer</span></div><input type="text" name="oferta_final" id="oferta_final" style="font-weight:bold; color:#30643E;"></div>
-        <div class="group" style="flex: 0.8;"><div class="label">Deposito <span class="label-en">/ Deposit</span></div><input type="text" name="apartado"></div>
+        <div class="group" style="flex: 0.8;"><div class="label">Apartado <span class="label-en">/ Booking</span></div><input type="text" name="apartado"></div>
         <div class="group" style="flex: 0.4;"><div class="label">Moneda</div>
-            <div style="display:flex; gap:5px; padding-top:1px;"><label style="font-size:7pt;"><input type="checkbox"> USD</label><label style="font-size:7pt;"><input type="checkbox"> MXN</label></div>
+            <div style="display:flex; gap:5px; padding-top:1px;"><label style="font-size:7pt;"><input type="checkbox"> USD</label><label style="font-size:7pt;"><input type="checkbox"> MN</label></div>
         </div>
     </div>
 
@@ -172,7 +185,10 @@
     <div class="row">
         <div class="group">
             <div class="label">% Mensualidades / Monto mensualidades <span class="label-en">/ Installments %</span></div>
-            <input type="text" name="pct_mes" id="pct_mes">
+            <div style="display: flex; gap: 8px;">
+                <input type="text" name="pct_mes" id="pct_mes" style="flex: 1;">
+                <input type="text" name="monto_total_mes" id="monto_total_mes" placeholder="Monto Total" readonly style="flex: 1; font-weight: bold;">
+            </div>
         </div>
         <div class="group" style="flex: 0.4;"><div class="label">No. Meses</div><input type="text" name="num_mes" id="num_mes"></div>
         <div class="group"><div class="label">Monto por Mensualidad</div><input type="text" name="monto_mes" id="monto_mes" readonly></div>
@@ -182,9 +198,13 @@
         <div class="group"><div class="label">% Contra Entrega <span class="label-en">/ Upon Delivery %</span></div><input type="text" name="pct_entrega" id="pct_entrega"></div>
         <div class="group"><div class="label">Monto Contra Entrega</div><input type="text" name="monto_entrega" id="monto_entrega" readonly></div>
     </div>
-  
-  
-  <div class="label"> Nota: El deposito es reembolsable en caso de cancelación durante 15 días. <span 
+
+    <div class="nota">Nota: El deposito es reembolsable en caso de cancelación durante 15 días</div>
+    
+    <div class="group" style="margin-top: 5px;">
+        <div class="label">Comentarios o solicitudes:</div>
+        <textarea name="comentarios" rows="4"></textarea>
+    </div>
 
     <div class="footer">
         <div class="sig-box">Iniciales Comprador / Buyer's initials</div>
@@ -207,7 +227,9 @@
 
             var pMes = parseFloat(document.getElementById("pct_mes").value) || 0;
             var nMes = parseFloat(document.getElementById("num_mes").value) || 1;
-            document.getElementById("monto_mes").value = ((finalOffer * (pMes / 100)) / nMes).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            var totalMesValue = finalOffer * (pMes / 100);
+            document.getElementById("monto_total_mes").value = totalMesValue.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            document.getElementById("monto_mes").value = (totalMesValue / nMes).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
 
             var pEnt = parseFloat(document.getElementById("pct_entrega").value) || 0;
             document.getElementById("monto_entrega").value = (finalOffer * (pEnt / 100)).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
